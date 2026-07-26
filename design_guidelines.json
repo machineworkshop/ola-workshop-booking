@@ -1,0 +1,93 @@
+{
+  "theme": "dark",
+  "archetype": "Electric & Neon",
+  "typography": {
+    "headings": {
+      "font_family": "Outfit",
+      "weights": ["400", "700", "900"],
+      "classes": "font-sans tracking-tighter"
+    },
+    "body": {
+      "font_family": "IBM Plex Sans",
+      "weights": ["400", "500"],
+      "classes": "font-sans leading-relaxed tracking-wide"
+    },
+    "scale": {
+      "h1": "text-4xl sm:text-5xl lg:text-6xl leading-none",
+      "h2": "text-2xl sm:text-3xl lg:text-4xl",
+      "h3": "text-xl sm:text-2xl",
+      "body": "text-base",
+      "labels": "text-sm uppercase tracking-[0.2em]"
+    },
+    "google_fonts_url": "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&family=Outfit:wght@400;700;900&display=swap"
+  },
+  "colors": {
+    "background": "#0A0A0A",
+    "surface": "#121212",
+    "primary": "#00FF66",
+    "primary_foreground": "#0A0A0A",
+    "secondary": "#1A1A1A",
+    "secondary_foreground": "#FFFFFF",
+    "border": "#2A2A2A",
+    "muted": "#1A1A1A",
+    "muted_foreground": "#808080",
+    "destructive": "#FF3B30",
+    "destructive_foreground": "#FFFFFF"
+  },
+  "layouts": {
+    "marketing_hero": "Asymmetrical split. Heavy text on left with neon accents, large overlapping EV scooter image on right. Use generous padding (py-24, py-32).",
+    "booking_form": "Mobile-first, stacked layout. Inputs must use high contrast borders. Use Shadcn components heavily customized to look 'technical'.",
+    "admin_dashboard": "High-density grid mode. Sidebar for navigation. Top metrics row (3-4 columns). Main table for orders. Tight gaps (gap-4 or gap-6). Flat solid surfaces."
+  },
+  "surfaces": {
+    "marketing_nav": "Crystal Glassmorphism: bg-black/60 backdrop-blur-xl border-b border-white/10",
+    "admin_cards": "Flat solid background #121212 with 1px border #2A2A2A. No shadows.",
+    "buttons": "Sharp corners or max 4px radius. High contrast hover states (e.g., hover:bg-[#00CC52] hover:text-black). Primary CTA gets 'Tracing Beam' or subtle drop-shadow glow."
+  },
+  "components": {
+    "form": "Shadcn Form, Input, Select, Calendar (for date). Overwrite border to be #2A2A2A and focus-ring to be #00FF66.",
+    "table": "Shadcn Table for admin dashboard. Ensure high contrast text for row data. Status badge (Pending = Yellow/Orange, In Progress = Blue/Volt, Completed = Muted Green/White).",
+    "toast": "Use Sonner for booking confirmation and status update notifications. Customize background to #121212 and border to #2A2A2A.",
+    "icons": "Phosphor Icons (@phosphor-icons/react) for sharp, technical look."
+  },
+  "animations": {
+    "hover": "Translate-y-[-2px] and subtle brightness increase on cards.",
+    "buttons": "transition-colors duration-200 ease-out",
+    "page_load": "Staggered fade-up for dashboard rows and marketing elements."
+  },
+  "media": {
+    "image_urls": {
+      "hero_scooter": {
+        "url": "https://images.pexels.com/photos/11263654/pexels-photo-11263654.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "description": "Electric scooter at night, use for landing page hero or background overlay",
+        "category": "hero"
+      },
+      "workshop_mechanic": {
+        "url": "https://images.unsplash.com/photo-1601998543706-1aaa490346d1?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Njd8MHwxfHNlYXJjaHw0fHxtZWNoYW5pYyUyMHJlcGFpcmluZyUyMHNjb290ZXJ8ZW58MHx8fHwxNzg1MDY5OTgyfDA&ixlib=rb-4.1.0&q=85",
+        "description": "Mechanic holding tools, use for 'About Service' or booking context section",
+        "category": "marketing_content"
+      }
+    }
+  },
+  "accessibility": {
+    "contrast": "Ensure primary green text (#00FF66) against #0A0A0A passes APCA. Buttons must have explicit hover colors. Form fields require visible labels.",
+    "testing": "All interactive elements (buttons, inputs, dropdowns) MUST have data-testid attributes (e.g., data-testid='submit-booking-button', data-testid='status-dropdown')."
+  },
+  "instructions_to_main_agent": [
+    "Run: yarn add @phosphor-icons/react sonner date-fns",
+    "Run: npx shadcn-ui@latest add form input select calendar popover table badge card dropdown-menu",
+    "Update tailwind.config.js to set font families: 'Outfit' for sans (headings) and 'IBM Plex Sans' for body.",
+    "Use JS/JSX syntax for React files instead of TS/TSX.",
+    "Do NOT use transparent backgrounds for the dropdown menus or header. Always use bg-black/60 with blur or solid #121212.",
+    "Implement two main routes: '/' (Landing + Booking Form) and '/admin' (Dashboard).",
+    "Dashboard must list orders with columns: Customer, Location, Scooter, Issue, Date, Status, Actions. Use Shadcn Table.",
+    "Avoid centered text layouts. Left-align most text for readability and modern brutalist tech feel.",
+    "Implement Sonner toast for 'Booking Successful' and 'Order Status Updated'."
+  ],
+  "UNIVERSAL_GUIDELINES_FOR_MAIN_AGENT": {
+    "spacing": "Use 2-3x more padding than usual. E.g., py-24 for sections.",
+    "borders": "No soft shadows. Rely on 1px solid borders (border-white/10) for separation.",
+    "interactions": "Never use 'transition: all'. Explicitly define transition properties (colors, transform).",
+    "data_testid": "Mandatory on all clickable elements and forms for testing."
+  }
+}
