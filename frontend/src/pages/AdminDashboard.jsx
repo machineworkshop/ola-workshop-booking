@@ -23,6 +23,7 @@ import {
 } from "../components/ui/select";
 import {
   Zap,
+  Wrench,
   LogOut,
   ClipboardList,
   Clock,
@@ -39,7 +40,7 @@ const STATUSES = ["Pending", "In Progress", "Completed"];
 const statusStyle = {
   Pending: "bg-[#FFA50022] text-[#FFB84D] border-[#FFA50044]",
   "In Progress": "bg-[#00A3FF22] text-[#4DB8FF] border-[#00A3FF44]",
-  Completed: "bg-[#00FF6622] text-[#00FF66] border-[#00FF6644]",
+  Completed: "bg-[#A3E63522] text-[#A3E635] border-[#A3E63544]",
 };
 
 export default function AdminDashboard() {
@@ -84,7 +85,7 @@ export default function AdminDashboard() {
     { label: "Total Orders", value: stats.total, icon: ClipboardList, color: "text-white" },
     { label: "Pending", value: stats.pending, icon: Clock, color: "text-[#FFB84D]" },
     { label: "In Progress", value: stats.in_progress, icon: Loader2, color: "text-[#4DB8FF]" },
-    { label: "Completed", value: stats.completed, icon: CheckCircle2, color: "text-[#00FF66]" },
+    { label: "Completed", value: stats.completed, icon: CheckCircle2, color: "text-[#A3E635]" },
   ];
 
   return (
@@ -92,10 +93,10 @@ export default function AdminDashboard() {
       <nav className="bg-black/60 backdrop-blur-xl border-b border-white/10 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded bg-[#00FF66] flex items-center justify-center">
-              <Zap className="h-5 w-5 text-black" fill="black" />
+            <div className="h-9 w-9 rounded-md bg-[#FF5A1F] flex items-center justify-center">
+              <Wrench className="h-5 w-5 text-white" strokeWidth={2.5} />
             </div>
-            <span className="font-display font-black text-lg tracking-tighter">MACHINE<span className="text-[#00FF66]"> WORKSHOP</span></span>
+            <span className="font-display font-black text-lg tracking-tight">MACHINE WORKSHOP</span>
             <span className="ml-3 text-xs uppercase tracking-[0.2em] text-white/40 hidden sm:inline">Admin</span>
           </div>
           <div className="flex items-center gap-4">
@@ -142,7 +143,7 @@ export default function AdminDashboard() {
         <div className="bg-[#121212] border border-[#2A2A2A] rounded-sm overflow-hidden">
           {loading ? (
             <div className="flex items-center justify-center py-20">
-              <Loader2 className="h-6 w-6 animate-spin text-[#00FF66]" />
+              <Loader2 className="h-6 w-6 animate-spin text-[#A3E635]" />
             </div>
           ) : bookings.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 text-white/40" data-testid="empty-state">
@@ -174,7 +175,7 @@ export default function AdminDashboard() {
                         <div className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5 text-white/40" />{b.place}</div>
                       </TableCell>
                       <TableCell className="text-white/70">
-                        <div className="font-medium text-[#00FF66]">{b.scooter_brand}</div>
+                        <div className="font-medium text-[#A3E635]">{b.scooter_brand}</div>
                         <div className="text-xs text-white/40">{b.scooter_model}</div>
                       </TableCell>
                       <TableCell className="text-white/70 max-w-[220px]">
@@ -186,12 +187,12 @@ export default function AdminDashboard() {
                       </TableCell>
                       <TableCell>
                         <Select value={b.status} onValueChange={(v) => changeStatus(b.id, v)}>
-                          <SelectTrigger className="w-[140px] h-9 bg-[#0A0A0A] border-[#2A2A2A] rounded-sm focus:ring-[#00FF66]" data-testid={`status-select-${b.id}`}>
+                          <SelectTrigger className="w-[140px] h-9 bg-black border-white/15 rounded-md focus:ring-[#A3E635]" data-testid={`status-select-${b.id}`}>
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent className="bg-[#121212] border-[#2A2A2A] text-white">
                             {STATUSES.map((s) => (
-                              <SelectItem key={s} value={s} className="focus:bg-[#00FF66]/10 focus:text-[#00FF66]" data-testid={`status-opt-${b.id}-${s}`}>{s}</SelectItem>
+                              <SelectItem key={s} value={s} className="focus:bg-[#A3E635]/10 focus:text-[#A3E635]" data-testid={`status-opt-${b.id}-${s}`}>{s}</SelectItem>
                             ))}
                           </SelectContent>
                         </Select>

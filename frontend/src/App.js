@@ -12,7 +12,7 @@ function ProtectedRoute({ children }) {
   if (loading || user === null) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#0A0A0A]">
-        <Loader2 className="h-8 w-8 animate-spin text-[#00FF66]" />
+        <Loader2 className="h-8 w-8 animate-spin text-[#A3E635]" />
       </div>
     );
   }
