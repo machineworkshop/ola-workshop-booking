@@ -95,7 +95,7 @@ export default function AdminDashboard() {
             <div className="h-8 w-8 rounded bg-[#00FF66] flex items-center justify-center">
               <Zap className="h-5 w-5 text-black" fill="black" />
             </div>
-            <span className="font-display font-black text-lg tracking-tighter">VOLT<span className="text-[#00FF66]">WORKS</span></span>
+            <span className="font-display font-black text-lg tracking-tighter">MACHINE<span className="text-[#00FF66]"> WORKSHOP</span></span>
             <span className="ml-3 text-xs uppercase tracking-[0.2em] text-white/40 hidden sm:inline">Admin</span>
           </div>
           <div className="flex items-center gap-4">

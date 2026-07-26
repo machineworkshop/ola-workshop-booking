@@ -138,7 +138,7 @@ export default function Landing() {
       {/* Services */}
       <section id="services" className="py-24 border-t border-white/10">
         <div className="max-w-7xl mx-auto px-6">
-          <h2 className="font-display font-black text-2xl sm:text-3xl lg:text-4xl tracking-tighter mb-3">Why VoltWorks</h2>
+          <h2 className="font-display font-black text-2xl sm:text-3xl lg:text-4xl tracking-tighter mb-3">Why Machine Workshop</h2>
           <p className="text-white/50 mb-12 max-w-md">Certified technicians, genuine parts, transparent pricing.</p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
@@ -175,7 +175,7 @@ export default function Landing() {
             <div className="bg-[#121212] border border-[#00FF66]/40 rounded-sm p-10 text-center" data-testid="booking-success">
               <CheckCircle2 className="h-14 w-14 text-[#00FF66] mx-auto mb-4" />
               <h3 className="font-display font-bold text-2xl mb-2">Booking Confirmed!</h3>
-              <p className="text-white/60 mb-6">Thanks for choosing VoltWorks. Our team will reach out shortly to confirm your service slot.</p>
+              <p className="text-white/60 mb-6">Thanks for choosing Machine Workshop. Our team will reach out shortly to confirm your service slot.</p>
               <Button onClick={() => setDone(false)} className="rounded-sm bg-[#00FF66] text-black font-semibold hover:bg-[#00CC52]" data-testid="new-booking-btn">
                 Book Another
               </Button>
@@ -238,7 +238,7 @@ export default function Landing() {
 
       <footer className="border-t border-white/10 py-10">
         <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-white/40">
-          <span>© 2026 VoltWorks — Multi-Brand EV Scooter Service</span>
+          <span>© 2026 Machine Workshop — Multi-Brand EV Scooter Service</span>
           <Link to="/login" className="hover:text-white transition-colors">Admin Login</Link>
         </div>
       </footer>

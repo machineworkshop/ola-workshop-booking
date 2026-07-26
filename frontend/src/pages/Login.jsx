@@ -39,7 +39,7 @@ export default function Login() {
           <div className="h-8 w-8 rounded bg-[#00FF66] flex items-center justify-center">
             <Zap className="h-5 w-5 text-black" fill="black" />
           </div>
-          <span className="font-display font-black text-lg tracking-tighter">VOLT<span className="text-[#00FF66]">WORKS</span></span>
+          <span className="font-display font-black text-lg tracking-tighter">MACHINE<span className="text-[#00FF66]"> WORKSHOP</span></span>
         </div>
 
         <h1 className="font-display font-black text-3xl tracking-tighter mb-2">Admin Login</h1>
