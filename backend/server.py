@@ -17,9 +17,10 @@ from fastapi import FastAPI, APIRouter, HTTPException, Request, Response, Depend
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 
-mongo_url = os.environ['MONGO_URL']
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
+mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
+db_name = os.environ.get('DB_NAME', 'machine_workshop')
+client = AsyncIOMotorClient(mongo_url, serverSelectionTimeoutMS=8000)
+db = client[db_name]
 
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
@@ -89,7 +90,7 @@ def verify_password(plain: str, hashed: str) -> bool:
 
 
 def get_jwt_secret() -> str:
-    return os.environ["JWT_SECRET"]
+    return os.environ.get("JWT_SECRET", "change-me-in-production-secret-key")
 
 
 def create_access_token(user_id: str, email: str) -> str:
