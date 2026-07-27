@@ -1,0 +1,20 @@
+{
+  "summary": "Verified Vercel login bug fix. Added 3 new tests to /app/backend/tests/test_workshop_api.py covering (1) /api/health returns status=ok, db=connected, admin_exists=true; (2) wrong password returns 401 with clean JSON detail 'Invalid email or password'; (3) idempotent admin seeding — 3 consecutive logins return the same admin user id (no duplicates). Full suite 17/17 passed against REACT_APP_BACKEND_URL. All previously-verified flows (auth cookie login, /auth/me, logout, public booking create, admin list/stats/patch, auth guards on protected endpoints, invalid status 400, nonexistent booking 404) continue to pass.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "test_report_links": ["/app/backend/tests/test_workshop_api.py", "/app/test_reports/pytest/pytest_results.xml"],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "ensure_admin_seeded() creates a unique index on users.email each call before the _admin_seeded flag guard hides subsequent calls — index creation is idempotent so this is fine, but could be moved above the cache-check for clarity.",
+    "CORS allow_origins uses a single FRONTEND_URL env; on Vercel with multiple preview URLs this may block browsers. Consider supporting a comma-separated list or regex.",
+    "Login DB failure returns 503 — good — but ensure_admin_seeded() itself is inside the try, so a transient seed failure on first login also surfaces as 503. Acceptable, worth documenting."
+  ],
+  "updated_files": ["/app/backend/tests/test_workshop_api.py"],
+  "success_rate": {"backend": "100%", "frontend": "not tested (backend-only request)"},
+  "test_credentials": "admin@workshop.com / workshop123",
+  "seed_data_creation": "Test bookings created with TEST_ prefixed customer_name/place fields (not cleaned up; harmless data).",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Backend suite at /app/backend/tests/test_workshop_api.py now covers 17 tests including health, wrong-password clean JSON, and idempotent admin seeding. Auth uses httpOnly access_token cookie (samesite=none, secure). Run with: pytest backend/tests/test_workshop_api.py -v.",
+  "rca of the issue": "Original Vercel bug: startup event may not run on serverless cold starts, so admin user was never seeded and login returned 500. Fix verified: ensure_admin_seeded() is invoked lazily inside POST /api/auth/login guarded by an in-memory _admin_seeded flag and a unique index on users.email for idempotency; DB errors during login are wrapped in try/except returning 503; /api/health reports db + admin_exists for diagnostics."
+}

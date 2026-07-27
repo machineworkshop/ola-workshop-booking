@@ -148,3 +148,30 @@ class TestBookingAdmin:
     def test_nonexistent_booking(self, admin_client):
         r = admin_client.patch(f"{API}/bookings/000000000000000000000000/status", json={"status": "Pending"})
         assert r.status_code == 404
+
+
+# -------- Health + Idempotent admin seeding --------
+class TestHealthAndSeeding:
+    def test_health(self):
+        r = requests.get(f"{API}/health")
+        assert r.status_code == 200
+        data = r.json()
+        assert data["status"] == "ok"
+        assert data["db"] == "connected"
+        assert data.get("admin_exists") is True
+
+    def test_wrong_password_clean_json(self):
+        r = requests.post(f"{API}/auth/login", json={"email": ADMIN_EMAIL, "password": "bad"})
+        assert r.status_code == 401
+        j = r.json()
+        assert j.get("detail") == "Invalid email or password"
+
+    def test_login_idempotent_no_dup_admin(self):
+        # Call login multiple times, ensure only one admin user exists via /me consistency
+        ids = set()
+        for _ in range(3):
+            s = requests.Session()
+            r = s.post(f"{API}/auth/login", json={"email": ADMIN_EMAIL, "password": ADMIN_PASSWORD})
+            assert r.status_code == 200
+            ids.add(r.json()["id"])
+        assert len(ids) == 1, f"Duplicate admin ids found: {ids}"

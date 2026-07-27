@@ -116,11 +116,43 @@ async def get_current_user(request: Request) -> dict:
         raise HTTPException(status_code=401, detail="Invalid token")
 
 
+# ---------------- Admin seeding (lazy + idempotent, serverless-safe) ----------------
+_admin_seeded = False
+
+
+async def ensure_admin_seeded():
+    """Seed the admin account on demand. Works even when startup events do not
+    fire (e.g. Vercel serverless). Idempotent and cached per warm instance."""
+    global _admin_seeded
+    if _admin_seeded:
+        return
+    admin_email = os.environ.get("ADMIN_EMAIL", "admin@workshop.com").lower()
+    admin_password = os.environ.get("ADMIN_PASSWORD", "workshop123")
+    await db.users.create_index("email", unique=True)
+    existing = await db.users.find_one({"email": admin_email})
+    if existing is None:
+        await db.users.insert_one({
+            "email": admin_email, "password_hash": hash_password(admin_password),
+            "name": "Workshop Admin", "role": "admin",
+            "created_at": datetime.now(timezone.utc).isoformat()})
+        logger.info("Seeded admin user")
+    elif not verify_password(admin_password, existing["password_hash"]):
+        await db.users.update_one({"email": admin_email},
+                                  {"$set": {"password_hash": hash_password(admin_password)}})
+        logger.info("Updated admin password")
+    _admin_seeded = True
+
+
 # ---------------- Auth routes ----------------
 @api_router.post("/auth/login")
 async def login(payload: LoginInput, response: Response):
-    email = payload.email.lower()
-    user = await db.users.find_one({"email": email})
+    try:
+        await ensure_admin_seeded()
+        email = payload.email.lower()
+        user = await db.users.find_one({"email": email})
+    except Exception as e:
+        logger.error(f"Database error during login: {e}")
+        raise HTTPException(status_code=503, detail="Cannot reach the database. Please check the server configuration and try again.")
     if not user or not verify_password(payload.password, user["password_hash"]):
         raise HTTPException(status_code=401, detail="Invalid email or password")
     token = create_access_token(str(user["_id"]), email)
@@ -184,6 +216,20 @@ async def root():
     return {"message": "Scooter Workshop API"}
 
 
+@api_router.get("/health")
+async def health():
+    """Report backend + MongoDB connectivity. Useful to diagnose deployments."""
+    info = {"status": "ok", "db": "unknown", "admin_seeded": _admin_seeded}
+    try:
+        await db.command("ping")
+        info["db"] = "connected"
+        info["admin_exists"] = (await db.users.find_one({"role": "admin"})) is not None
+    except Exception as e:
+        info["status"] = "error"
+        info["db"] = f"error: {e}"
+    return info
+
+
 app.include_router(api_router)
 
 app.add_middleware(
@@ -197,20 +243,11 @@ app.add_middleware(
 
 @app.on_event("startup")
 async def startup():
-    await db.users.create_index("email", unique=True)
-    admin_email = os.environ.get("ADMIN_EMAIL", "admin@workshop.com").lower()
-    admin_password = os.environ.get("ADMIN_PASSWORD", "workshop123")
-    existing = await db.users.find_one({"email": admin_email})
-    if existing is None:
-        await db.users.insert_one({
-            "email": admin_email, "password_hash": hash_password(admin_password),
-            "name": "Workshop Admin", "role": "admin",
-            "created_at": datetime.now(timezone.utc).isoformat()})
-        logger.info("Seeded admin user")
-    elif not verify_password(admin_password, existing["password_hash"]):
-        await db.users.update_one({"email": admin_email},
-                                  {"$set": {"password_hash": hash_password(admin_password)}})
-        logger.info("Updated admin password")
+    try:
+        await ensure_admin_seeded()
+        logger.info("Startup admin seed complete")
+    except Exception as e:
+        logger.error(f"Startup admin seed failed (will retry lazily on login): {e}")
 
 
 @app.on_event("shutdown")
