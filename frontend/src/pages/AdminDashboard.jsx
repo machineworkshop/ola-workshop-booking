@@ -41,6 +41,7 @@ export default function AdminDashboard() {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [newSlot, setNewSlot] = useState("");
+  const [tab, setTab] = useState("bookings");
 
   const loadBookings = useCallback(async (q = "") => {
     const [b, s] = await Promise.all([
@@ -51,8 +52,8 @@ export default function AdminDashboard() {
     setStats(s.data);
   }, []);
 
-  const loadAll = useCallback(async () => {
-    setLoading(true);
+  const loadAll = useCallback(async (showLoader = false) => {
+    if (showLoader) setLoading(true);
     try {
       const [sl, st] = await Promise.all([api.get("/slots"), api.get("/settings")]);
       setSlots(sl.data);
@@ -61,11 +62,11 @@ export default function AdminDashboard() {
     } catch (e) {
       toast.error("Failed to load data");
     } finally {
-      setLoading(false);
+      if (showLoader) setLoading(false);
     }
   }, [loadBookings]);
 
-  useEffect(() => { loadAll(); }, [loadAll]);
+  useEffect(() => { loadAll(true); }, [loadAll]);
 
   const doLogout = async () => { await logout(); navigate("/login", { replace: true }); };
 
@@ -149,7 +150,7 @@ export default function AdminDashboard() {
       </nav>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-        <Tabs defaultValue="bookings">
+        <Tabs value={tab} onValueChange={setTab}>
           <TabsList className="bg-[#121212] border border-white/10 rounded-md p-1 mb-6">
             <TabsTrigger value="bookings" className="data-[state=active]:bg-[#FFD400] data-[state=active]:text-black rounded-sm px-4" data-testid="tab-bookings">Bookings</TabsTrigger>
             <TabsTrigger value="slots" className="data-[state=active]:bg-[#FFD400] data-[state=active]:text-black rounded-sm px-4" data-testid="tab-slots">Service Slots</TabsTrigger>
