@@ -203,17 +203,27 @@ async def public_config():
     }
 
 
+# ---------------- Slot capacity helper ----------------
+async def active_counts_by_slot() -> dict:
+    pipeline = [
+        {"$match": {"status": {"$in": ACTIVE_STATUSES}}},
+        {"$group": {"_id": "$slot_id", "count": {"$sum": 1}}},
+    ]
+    rows = await db.bookings.aggregate(pipeline).to_list(1000)
+    return {r["_id"]: r["count"] for r in rows}
+
+
 @api_router.get("/slots/available")
 async def available_slots():
     s = await get_settings_doc()
     if not s["is_available"] or s["holiday_mode"]:
         return []
     max_per = s["max_bookings_per_slot"]
+    counts = await active_counts_by_slot()
     slots = await db.slots.find({"is_open": True}).sort("created_at", 1).to_list(200)
     out = []
     for slot in slots:
-        count = await db.bookings.count_documents({"slot_id": str(slot["_id"]), "status": {"$in": ACTIVE_STATUSES}})
-        remaining = max_per - count
+        remaining = max_per - counts.get(str(slot["_id"]), 0)
         if remaining > 0:
             out.append({"id": str(slot["_id"]), "label": slot["label"], "remaining": remaining})
     return out
@@ -273,12 +283,12 @@ async def update_status(booking_id: str, payload: StatusUpdate, current_user: di
 # ---------------- Slots (admin) ----------------
 @api_router.get("/slots")
 async def list_slots(current_user: dict = Depends(get_current_user)):
+    counts = await active_counts_by_slot()
     docs = await db.slots.find().sort("created_at", 1).to_list(200)
     out = []
     for slot in docs:
-        count = await db.bookings.count_documents({"slot_id": str(slot["_id"]), "status": {"$in": ACTIVE_STATUSES}})
         d = serialize(slot)
-        d["booked"] = count
+        d["booked"] = counts.get(str(slot["_id"]), 0)
         out.append(d)
     return out
 
