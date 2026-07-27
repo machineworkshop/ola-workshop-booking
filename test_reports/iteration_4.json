@@ -1,0 +1,31 @@
+{
+  "summary": "Full backend + frontend regression for Machine Workshop (new schema: slot_id/slot_label, location/landmark; auth cookie; settings/slots/bookings). Rewrote /app/backend/tests/test_workshop_api.py to match the new booking payload and added coverage for /api/config, /api/slots/available, /api/slots (create/toggle/delete + auth guards), /api/settings (auth guard, put persist, holiday_mode blocks, is_available=False blocks), /api/bookings (create, list+search, stats, status flow Accepted→In Progress→Completed, Rejected, invalid status 400, nonexistent 404, closed-slot rejected, capacity enforced). Fixed xdist race by consolidating settings-mutating tests into one class so LoadScopeScheduling pins them to one worker. 25/25 pytest passed. Frontend E2E via Playwright verified: Home hero/book-now/call-now/6 brand-cards/3 reviews; /book form submit → booking-success; unauth /admin → /login; login → dashboard; Bookings search filters (27→1), Accept button flow works; Slots tab add/toggle/delete works (via API-confirmed persistence); Settings max_bookings_per_slot persists after onBlur+reload=4; Holiday-mode ON → /book closed-message + / closed-banner shown; toggling OFF restores form; logout redirects to /login.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "AdminDashboard", "issue": "Every mutation (addSlot, toggleSlot, removeSlot, saveSettings) calls loadAll() which sets loading=true → the entire Tabs container is unmounted and remounted with defaultValue='bookings'. Result: after toggling a slot ON/OFF, deleting a slot, or saving settings, the user is thrown back to the Bookings tab. Fix: don't gate the whole dashboard on loading; either scope loading to per-section, or make Tabs controlled with a persisted active tab, or refresh only the affected slice (setSlots/setSettings) without flipping global loading.", "selector": "tab-slots / tab-settings", "priority": "MEDIUM"}
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": ["/app/backend/tests/test_workshop_api.py", "/app/test_reports/pytest/pytest_results.xml"],
+  "action_items": [
+    "Fix AdminDashboard tab-reset UX bug: mutations shouldn't unmount Tabs (loading=true bounces user to Bookings). Make Tabs controlled or use per-section loading flags."
+  ],
+  "critical_code_review_comments": [
+    "CORS still allows only single FRONTEND_URL; preview + production Vercel URLs would need a list/regex.",
+    "AdminDashboard.jsx: loadAll() flipping global loading=true remounts the entire Tabs and resets active tab to defaultValue — noticeable regression for any user interacting with Slots or Settings.",
+    "server.py DELETE /api/slots/{id} does not clean up bookings still referencing the deleted slot_id; those bookings become orphaned (slot_label is still stored so listing works, but slot integrity is lost).",
+    "server.py update_settings: PUT accepts working_hours as an untyped dict; recommend Pydantic sub-model to validate {open, close} shape.",
+    "test_workshop_api.py had to be rewritten because previous tests used the old schema (place/preferred_date) — main agent should update generator/tests together next time.",
+    "pytest.ini forces -n 2 loadscope; any two test classes that mutate shared settings will race. Consolidated them into TestBookings class as a workaround; a filelock-based fixture would be cleaner."
+  ],
+  "updated_files": ["/app/backend/tests/test_workshop_api.py"],
+  "success_rate": {"backend": "100% (25/25)", "frontend": "~95% (all critical flows verified; observed loading→tab-reset UX bug)"},
+  "test_credentials": "admin@workshop.com / workshop123",
+  "seed_data_creation": "TEST_-prefixed bookings created during backend + UI runs remain (~27 rows in bookings). Test slots (TEST_Cap, TEST_UI_SLOT 5-6 PM, TEST_Closed) were cleaned up. Settings restored to defaults; only seed slot '10:00 AM - 11:00 AM' remains. App left in bookable state.",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Backend suite is at /app/backend/tests/test_workshop_api.py (25 tests, all pass). Run: REACT_APP_BACKEND_URL=<url> pytest backend/tests/test_workshop_api.py -v. Note pytest.ini forces xdist -n 2 loadscope; keep all settings-mutating tests in the same class or they will race. Frontend has a known UX issue where any admin mutation kicks the user back to the Bookings tab (loading=true unmounts Tabs).",
+  "rca of the issue": "AdminDashboard.jsx line 119: `if (loading || !settings) return <Loader />` unmounts the entire <Tabs defaultValue='bookings'> subtree every time loadAll() runs. Since Tabs is uncontrolled with defaultValue='bookings', when it remounts the active tab resets. Repro: login → click Service Slots tab → toggle any slot ON/OFF → UI jumps back to Bookings tab. Mitigation: (a) make Tabs controlled via useState-tracked active tab, (b) don't set loading=true on subsequent loadAll() calls, or (c) update only the affected slice (setSlots / setSettings) without triggering a full-screen loader."
+}

@@ -3,7 +3,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "sonner";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { ErrorBoundary } from "./components/ErrorBoundary";
-import Landing from "./pages/Landing";
+import Home from "./pages/Home";
+import Book from "./pages/Book";
 import Login from "./pages/Login";
 import AdminDashboard from "./pages/AdminDashboard";
 import { Loader2 } from "lucide-react";
@@ -13,7 +14,7 @@ function ProtectedRoute({ children }) {
   if (loading || user === null) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black">
-        <Loader2 className="h-8 w-8 animate-spin text-[#A3E635]" />
+        <Loader2 className="h-8 w-8 animate-spin text-[#FFD400]" />
       </div>
     );
   }
@@ -28,43 +29,19 @@ function App() {
         <AuthProvider>
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Landing />} />
+              <Route path="/" element={<Home />} />
+              <Route path="/book" element={<Book />} />
               <Route path="/login" element={<Login />} />
-              <Route
-                path="/admin"
-                element={
-                  <ProtectedRoute>
-                    <AdminDashboard />
-                  </ProtectedRoute>
-                }
-              />
-              {/* Aliases so /owner and /dashboard also open the owner dashboard */}
-              <Route
-                path="/owner"
-                element={
-                  <ProtectedRoute>
-                    <AdminDashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/dashboard"
-                element={
-                  <ProtectedRoute>
-                    <AdminDashboard />
-                  </ProtectedRoute>
-                }
-              />
-              {/* Catch-all: never leave a blank screen on unknown paths */}
+              <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+              <Route path="/owner" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+              <Route path="/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </BrowserRouter>
           <Toaster
             theme="dark"
             position="top-right"
-            toastOptions={{
-              style: { background: "#121212", border: "1px solid #2A2A2A", color: "#fff" },
-            }}
+            toastOptions={{ style: { background: "#141414", border: "1px solid #2A2A2A", color: "#fff" } }}
           />
         </AuthProvider>
       </ErrorBoundary>

@@ -12,7 +12,7 @@ body {
 }
 
 ::selection {
-    background: #A3E635;
+    background: #FFD400;
     color: #0A0A0A;
 }
 
@@ -24,7 +24,7 @@ body {
         --card-foreground: 0 0% 100%;
         --popover: 0 0% 7%;
         --popover-foreground: 0 0% 100%;
-        --primary: 83 74% 55%;
+        --primary: 50 100% 50%;
         --primary-foreground: 0 0% 4%;
         --secondary: 0 0% 10%;
         --secondary-foreground: 0 0% 100%;
@@ -36,7 +36,7 @@ body {
         --destructive-foreground: 0 0% 100%;
         --border: 0 0% 16%;
         --input: 0 0% 16%;
-        --ring: 83 74% 55%;
+        --ring: 50 100% 50%;
         --radius: 0.25rem;
     }
 }
