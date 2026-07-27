@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 
 const HERO_IMG =
-  "https://images.unsplash.com/photo-1623993308369-017255b87e2c?crop=entropy&cs=srgb&fm=jpg&q=85&w=1200";
+  "https://customer-assets-agu9un31.emergentagent.net/job_ola-workshop-booking/artifacts/5xg4uxt0_5B9DB921-15F6-48CF-A523-23D10BB3282F.png";
 
 const BRANDS = [
   { name: "Ola Electric", tag: "S1 Pro / S1 Air" },
@@ -57,18 +57,18 @@ export default function Home() {
             {config.holiday_mode ? "We're on holiday — bookings are temporarily closed." : "Bookings are currently closed. Please check back soon."}
           </div>
         )}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-12 lg:pt-16 grid lg:grid-cols-2 gap-10 items-center">
-          <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#FFD400]/40 bg-[#FFD400]/10 text-[#FFD400] text-xs uppercase tracking-[0.2em] mb-6">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#FFD400] animate-pulse" /> Multi-Brand EV Workshop
-            </div>
-            <h1 className="font-display font-black text-4xl sm:text-5xl lg:text-6xl leading-[0.95] tracking-tight mb-5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-6 lg:pt-8">
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="relative rounded-xl overflow-hidden border border-white/10">
+            <img src={HERO_IMG} alt="Machine Workshop — Multi Brand Two Wheeler Service" className="w-full object-cover" data-testid="hero-image" />
+          </motion.div>
+          <div className="text-center max-w-2xl mx-auto mt-8">
+            <h1 className="font-display font-black text-4xl sm:text-5xl lg:text-6xl leading-[0.95] tracking-tight mb-4">
               Book Your <span className="text-[#FFD400]">Scooter Service</span>
             </h1>
-            <p className="text-base text-white/60 max-w-md mb-8 leading-relaxed">
+            <p className="text-base text-white/60 mb-7 leading-relaxed">
               Expert care for Ola, Ather, TVS, Hero, Bajaj Chetak & more. Pick a slot, tell us the issue, and we'll take care of the rest — right here in Bangalore.
             </p>
-            <div className="flex flex-wrap items-center gap-4">
+            <div className="flex flex-wrap items-center justify-center gap-4">
               <Link to="/book">
                 <Button className="h-12 px-6 rounded-md bg-[#FFD400] text-black font-bold uppercase hover:bg-[#E6BE00] transition-colors" data-testid="book-now-btn">
                   <CalendarCheck className="mr-2 h-4 w-4" /> Book Now
@@ -80,24 +80,12 @@ export default function Home() {
                 </Button>
               </a>
             </div>
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mt-8 text-sm text-white/50">
+            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 mt-7 text-sm text-white/50">
               {[{ i: Truck, t: "Pickup & Drop" }, { i: ShieldCheck, t: "Genuine Parts" }, { i: Award, t: "Service Warranty" }, { i: IndianRupee, t: "Fair Pricing" }].map((f) => (
                 <span key={f.t} className="flex items-center gap-2"><f.i className="h-4 w-4 text-[#FFD400]" /> {f.t}</span>
               ))}
             </div>
-          </motion.div>
-
-          <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6, delay: 0.15 }} className="relative">
-            <div className="absolute -inset-6 bg-[#FFD400]/10 blur-3xl rounded-full" />
-            <img src={HERO_IMG} alt="Electric scooter" className="relative rounded-xl border border-white/10 w-full object-cover h-[420px]" data-testid="hero-image" />
-            <div className="absolute bottom-4 left-4 bg-black/85 backdrop-blur border border-[#FFD400]/40 rounded-lg px-4 py-3 flex items-center gap-3">
-              <Phone className="h-7 w-7 text-[#FFD400]" />
-              <div>
-                <div className="text-[10px] uppercase tracking-wide text-white/60">Call for Bookings</div>
-                <div className="font-display font-black text-xl text-[#FFD400] leading-none">{PHONE}</div>
-              </div>
-            </div>
-          </motion.div>
+          </div>
         </div>
       </section>
 
